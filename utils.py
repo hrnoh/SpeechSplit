@@ -84,5 +84,6 @@ def get_mask_from_lengths(lengths, max_len):
 
 def pad_seq_to_2(x, len_out=128):
     len_pad = (len_out - x.shape[1])
+    print(x.shape[1], len_out)
     assert len_pad >= 0
     return np.pad(x, ((0,0),(0,len_pad),(0,0)), 'constant'), len_pad    

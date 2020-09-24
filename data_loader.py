@@ -94,22 +94,25 @@ class Utterances(data.Dataset):
 
 class MyCollator(object):
     def __init__(self, hparams):
-        self.min_len_seq = hparams.min_len_seq
-        self.max_len_seq = hparams.max_len_seq
+        self.min_len_seq = hparams.min_len_seq # 19
+        self.max_len_seq = hparams.max_len_seq # 32
         self.max_len_pad = hparams.max_len_pad
         
     def __call__(self, batch):
         # batch[i] is a tuple of __getitem__ outputs
         new_batch = []
         for token in batch:
-            aa, b, c = token
+            aa, b, c = token # melsp, emb_org, f0_org
             len_crop = np.random.randint(self.min_len_seq, self.max_len_seq+1, size=2) # 1.5s ~ 3s
             left = np.random.randint(0, len(aa)-len_crop, size=2)
             
             a = aa[left[0]:left[0]+len_crop[0], :]
             c = c[left[0]:left[0]+len_crop[0]]
+
+            print(a.shape)
             
             a = np.clip(a, 0, 1)
+
             
             a_pad = np.pad(a, ((0,self.max_len_pad-a.shape[0]),(0,0)), 'constant')
             c_pad = np.pad(c[:,np.newaxis], ((0,self.max_len_pad-c.shape[0]),(0,0)), 'constant', constant_values=-1e10)

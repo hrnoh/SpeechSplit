@@ -3,6 +3,7 @@ import sys
 import pickle
 import numpy as np
 import soundfile as sf
+import librosa
 from scipy import signal
 from librosa.filters import mel
 from numpy.random import RandomState
@@ -12,21 +13,28 @@ from utils import speaker_normalization
 from utils import pySTFT
     
 
-mel_basis = mel(16000, 1024, fmin=90, fmax=7600, n_mels=80).T
+mel_basis = mel(22050, 1024, fmin=55, fmax=7600, n_mels=80).T # 원래 fmin=90
 min_level = np.exp(-100 / 20 * np.log(10))
 b, a = butter_highpass(30, 16000, order=5)
 
 spk2gen = pickle.load(open('assets/spk2gen.pkl', "rb"))
 
- 
+
+# Used speakers
+females = ['001', '005', '013', '017', '023', '024', '030', '032', '036', '037']
+males = ['002', '003', '004', '006', '007', '008', '009', '010', '011', '012']
+used_spks = females + males
+
 # Modify as needed
-rootDir = 'assets/wavs'
-targetDir_f0 = 'assets/raptf0'
-targetDir = 'assets/spmel'
+rootDir = '/hd0/dataset/audiobook'
+targetDir_f0 = '/hd0/speechsplit/preprocessed/raptf0'
+targetDir = '/hd0/speechsplit/preprocessed/spmel'
 
    
 dirName, subdirList, _ = next(os.walk(rootDir))
 print('Found directory: %s' % dirName)
+
+subdirList = [d for d in subdirList if d in used_spks]
 
 for subdir in sorted(subdirList):
     print(subdir)
@@ -47,18 +55,21 @@ for subdir in sorted(subdirList):
     prng = RandomState(int(subdir[1:])) 
     for fileName in sorted(fileList):
         # read audio file
-        x, fs = sf.read(os.path.join(dirName,subdir,fileName))
-        assert fs == 16000
+        #x, fs = sf.read(os.path.join(dirName,subdir,fileName))
+        x, fs = librosa.load(os.path.join(dirName,subdir,fileName))
+        assert fs == 22050 #16000
         if x.shape[0] % 256 == 0:
             x = np.concatenate((x, np.array([1e-06])), axis=0)
-        y = signal.filtfilt(b, a, x)
-        wav = y * 0.96 + (prng.rand(y.shape[0])-0.5)*1e-06
+        #y = signal.filtfilt(b, a, x)
+        #wav = y * 0.96 + (prng.rand(y.shape[0])-0.5)*1e-06
+        wav = x
         
         # compute spectrogram
         D = pySTFT(wav).T
         D_mel = np.dot(D, mel_basis)
-        D_db = 20 * np.log10(np.maximum(min_level, D_mel)) - 16
-        S = (D_db + 100) / 100        
+        #D_db = 20 * np.log10(np.maximum(min_level, D_mel)) - 16
+        #S = (D_db + 100) / 100
+        S = np.log10(np.clip(D_mel, 1e-2, None))
         
         # extract f0
         f0_rapt = sptk.rapt(wav.astype(np.float32)*32768, fs, 256, min=lo, max=hi, otype=2)

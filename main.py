@@ -45,13 +45,13 @@ if __name__ == '__main__':
     parser.add_argument('--resume_iters', type=int, default=None, help='resume training from this step')
 
     # Miscellaneous.
-    parser.add_argument('--use_tensorboard', type=str2bool, default=False)
+    parser.add_argument('--use_tensorboard', type=str2bool, default=True)
     parser.add_argument('--device_id', type=int, default=0)
 
     # Directories.
-    parser.add_argument('--log_dir', type=str, default='run/logs')
-    parser.add_argument('--model_save_dir', type=str, default='run/models')
-    parser.add_argument('--sample_dir', type=str, default='run/samples')
+    parser.add_argument('--log_dir', type=str, default='test/logs')
+    parser.add_argument('--model_save_dir', type=str, default='test/models')
+    parser.add_argument('--sample_dir', type=str, default='test/samples')
 
     # Step size.
     parser.add_argument('--log_step', type=int, default=10)

@@ -18,7 +18,7 @@ hparams = HParams(
     dim_enc_3 = 256,
     
     dim_freq = 80,
-    dim_spk_emb = 82,
+    dim_spk_emb = 20,
     dim_f0 = 257,
     dim_dec = 512,
     len_raw = 128,
@@ -32,8 +32,8 @@ hparams = HParams(
     max_len_pad = 192,
     
     # data loader
-    root_dir = 'assets/spmel',
-    feat_dir = 'assets/raptf0',
+    root_dir = '/hd0/speechsplit/preprocessed/spmel',
+    feat_dir = '/hd0/speechsplit/preprocessed/raptf0',
     batch_size = 16,
     mode = 'train',
     shuffle = True,

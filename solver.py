@@ -13,7 +13,7 @@ from utils import pad_seq_to_2, quantize_f0_torch, quantize_f0_numpy
 
 # use demo data for simplicity
 # make your own validation set as needed
-validation_pt = pickle.load(open('assets/demo.pkl', "rb"))
+validation_pt = pickle.load(open('/hd0/speechsplit/preprocessed/spmel/val.pkl', "rb"))
 
 class Solver(object):
     """Solver for training"""
@@ -202,26 +202,25 @@ class Solver(object):
                 print('Saved model checkpoints into {}...'.format(self.model_save_dir))            
             
 
-            # Validation.
             if (i+1) % self.sample_step == 0:
                 self.G = self.G.eval()
                 with torch.no_grad():
                     loss_val = []
                     for val_sub in validation_pt:
-                        emb_org_val = torch.from_numpy(val_sub[1]).to(self.device)         
+                        emb_org_val = torch.from_numpy(val_sub[1]).to(self.device)
                         for k in range(2, 3):
                             x_real_pad, _ = pad_seq_to_2(val_sub[k][0][np.newaxis,:,:], 192)
-                            len_org = torch.tensor([val_sub[k][2]]).to(self.device) 
+                            len_org = torch.tensor([val_sub[k][2]]).to(self.device)
                             f0_org = np.pad(val_sub[k][1], (0, 192-val_sub[k][2]), 'constant', constant_values=(0, 0))
                             f0_quantized = quantize_f0_numpy(f0_org)[0]
                             f0_onehot = f0_quantized[np.newaxis, :, :]
-                            f0_org_val = torch.from_numpy(f0_onehot).to(self.device) 
-                            x_real_pad = torch.from_numpy(x_real_pad).to(self.device) 
+                            f0_org_val = torch.from_numpy(f0_onehot).to(self.device)
+                            x_real_pad = torch.from_numpy(x_real_pad).to(self.device)
                             x_f0 = torch.cat((x_real_pad, f0_org_val), dim=-1)
-                            x_identic_val = self.G(x_f0, x_real_pad, emb_org_val)
+                            x_identic_val = self.G(x_f0, x_real_pad, emb_org_val.unsqueeze(0))
                             g_loss_val = F.mse_loss(x_real_pad, x_identic_val, reduction='sum')
                             loss_val.append(g_loss_val.item())
-                val_loss = np.mean(loss_val) 
+                val_loss = np.mean(loss_val)
                 print('Validation loss: {}'.format(val_loss))
                 if self.use_tensorboard:
                     self.writer.add_scalar('Validation_loss', val_loss, i+1)
@@ -245,10 +244,10 @@ class Solver(object):
                             x_f0_F = torch.cat((x_real_pad, torch.zeros_like(f0_org_val)), dim=-1)
                             x_f0_C = torch.cat((torch.zeros_like(x_real_pad), f0_org_val), dim=-1)
                             
-                            x_identic_val = self.G(x_f0, x_real_pad, emb_org_val)
-                            x_identic_woF = self.G(x_f0_F, x_real_pad, emb_org_val)
-                            x_identic_woR = self.G(x_f0, torch.zeros_like(x_real_pad), emb_org_val)
-                            x_identic_woC = self.G(x_f0_C, x_real_pad, emb_org_val)
+                            x_identic_val = self.G(x_f0, x_real_pad, emb_org_val.unsqueeze(0))
+                            x_identic_woF = self.G(x_f0_F, x_real_pad, emb_org_val.unsqueeze(0))
+                            x_identic_woR = self.G(x_f0, torch.zeros_like(x_real_pad), emb_org_val.unsqueeze(0))
+                            x_identic_woC = self.G(x_f0_C, x_real_pad, emb_org_val.unsqueeze(0))
                             
                             melsp_gd_pad = x_real_pad[0].cpu().numpy().T
                             melsp_out = x_identic_val[0].cpu().numpy().T
