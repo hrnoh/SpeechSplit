@@ -69,7 +69,7 @@ for subdir in sorted(subdirList):
         D_mel = np.dot(D, mel_basis)
         #D_db = 20 * np.log10(np.maximum(min_level, D_mel)) - 16
         #S = (D_db + 100) / 100
-        S = np.log10(np.clip(D_mel, 1e-2, None))
+        S = np.log10(np.clip(D_mel, 1e-2, None)) # 우리꺼
         
         # extract f0
         f0_rapt = sptk.rapt(wav.astype(np.float32)*32768, fs, 256, min=lo, max=hi, otype=2)

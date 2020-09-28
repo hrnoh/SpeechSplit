@@ -12,10 +12,10 @@ hparams = HParams(
     dim_neck_2 = 1,
     freq_3 = 8,
     dim_neck_3 = 32,
-    
-    dim_enc = 512,
-    dim_enc_2 = 128,
-    dim_enc_3 = 256,
+
+    dim_enc = 512, # content encoder
+    dim_enc_2 = 128, # rhythm encoder
+    dim_enc_3 = 256, # pitch encoder
     
     dim_freq = 80,
     dim_spk_emb = 20,
