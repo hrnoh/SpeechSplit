@@ -143,6 +143,7 @@ class Encoder_6(nn.Module):
     
 class Encoder_7(nn.Module):
     """Sync Encoder module
+        Content encoder + Pitch encoder
     """
     def __init__(self, hparams):
         super().__init__()
