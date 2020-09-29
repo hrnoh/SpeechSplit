@@ -49,12 +49,12 @@ class Encoder_t(nn.Module):
     def __init__(self, hparams):
         super().__init__()
 
-        self.dim_neck_2 = hparams.dim_neck_2
-        self.freq_2 = hparams.freq_2
-        self.dim_freq = hparams.dim_freq
-        self.dim_enc_2 = hparams.dim_enc_2
-        self.dim_emb = hparams.dim_spk_emb
-        self.chs_grp = hparams.chs_grp
+        self.dim_neck_2 = hparams.dim_neck_2   # 1
+        self.freq_2 = hparams.freq_2           # 8
+        self.dim_freq = hparams.dim_freq       # 80
+        self.dim_enc_2 = hparams.dim_enc_2     # 128
+        self.dim_emb = hparams.dim_spk_emb     # 20
+        self.chs_grp = hparams.chs_grp         # 16
         
         convolutions = []
         for i in range(1):
@@ -141,22 +141,22 @@ class Encoder_6(nn.Module):
     
     
     
-class Encoder_7(nn.Module):
+class Encoder_7(nn.Module):    # Content Encoder + Pitch Encoder
     """Sync Encoder module
     """
     def __init__(self, hparams):
         super().__init__()
 
-        self.dim_neck = hparams.dim_neck
-        self.freq = hparams.freq
-        self.freq_3 = hparams.freq_3
-        self.dim_enc = hparams.dim_enc
-        self.dim_enc_3 = hparams.dim_enc_3
-        self.dim_freq = hparams.dim_freq
-        self.chs_grp = hparams.chs_grp
+        self.dim_neck = hparams.dim_neck      # 8
+        self.freq = hparams.freq              # 8
+        self.freq_3 = hparams.freq_3          # 8
+        self.dim_enc = hparams.dim_enc        # 512
+        self.dim_enc_3 = hparams.dim_enc_3    # 256
+        self.dim_freq = hparams.dim_freq      # 80
+        self.chs_grp = hparams.chs_grp        # 16
         self.register_buffer('len_org', torch.tensor(hparams.max_len_pad))
-        self.dim_neck_3 = hparams.dim_neck_3
-        self.dim_f0 = hparams.dim_f0
+        self.dim_neck_3 = hparams.dim_neck_3  # 32
+        self.dim_f0 = hparams.dim_f0          # 257
         
         # convolutions for code 1
         convolutions = []
@@ -261,9 +261,9 @@ class Decoder_4(nn.Module):
     """
     def __init__(self, hparams):
         super().__init__()
-        self.dim_neck_2 = hparams.dim_neck_2
-        self.dim_f0 = hparams.dim_f0
-        self.dim_neck_3 = hparams.dim_neck_3
+        self.dim_neck_2 = hparams.dim_neck_2       # 1
+        self.dim_f0 = hparams.dim_f0               # 257
+        self.dim_neck_3 = hparams.dim_neck_3       # 32
         
         self.lstm = nn.LSTM(self.dim_neck_2*2+self.dim_neck_3*2, 
                             256, 2, batch_first=True, bidirectional=True)
@@ -356,13 +356,13 @@ class InterpLnr(nn.Module):
     
     def __init__(self, hparams):
         super().__init__()
-        self.max_len_seq = hparams.max_len_seq
-        self.max_len_pad = hparams.max_len_pad
+        self.max_len_seq = hparams.max_len_seq  # 128
+        self.max_len_pad = hparams.max_len_pad  # 192
         
-        self.min_len_seg = hparams.min_len_seg
-        self.max_len_seg = hparams.max_len_seg
+        self.min_len_seg = hparams.min_len_seg  # 19
+        self.max_len_seg = hparams.max_len_seg  # 32
         
-        self.max_num_seg = self.max_len_seq // self.min_len_seg + 1
+        self.max_num_seg = self.max_len_seq // self.min_len_seg + 1  # 7
         
         
     def pad_sequences(self, sequences):

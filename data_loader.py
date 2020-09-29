@@ -96,7 +96,7 @@ class MyCollator(object):
     def __init__(self, hparams):
         self.min_len_seq = hparams.min_len_seq # 19
         self.max_len_seq = hparams.max_len_seq # 32
-        self.max_len_pad = hparams.max_len_pad
+        self.max_len_pad = hparams.max_len_pad # 192
         
     def __call__(self, batch):
         # batch[i] is a tuple of __getitem__ outputs
@@ -109,7 +109,7 @@ class MyCollator(object):
             a = aa[left[0]:left[0]+len_crop[0], :]
             c = c[left[0]:left[0]+len_crop[0]]
 
-            print(a.shape)
+            # print(a.shape)
             
             a = np.clip(a, 0, 1)
 

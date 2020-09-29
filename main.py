@@ -7,8 +7,6 @@ from solver import Solver
 from data_loader import get_loader
 from hparams import hparams, hparams_debug_string
 
-
-
 def str2bool(v):
     return v.lower() in ('true')
 
@@ -31,8 +29,8 @@ def main(config):
     solver = Solver(vcc_loader, config, hparams)
 
     solver.train()
-    
-        
+
+
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -61,4 +59,6 @@ if __name__ == '__main__':
     config = parser.parse_args()
     print(config)
     print(hparams_debug_string())
+
+
     main(config)

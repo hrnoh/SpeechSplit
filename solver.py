@@ -13,7 +13,7 @@ from utils import pad_seq_to_2, quantize_f0_torch, quantize_f0_numpy
 
 # use demo data for simplicity
 # make your own validation set as needed
-validation_pt = pickle.load(open('/hd0/speechsplit/preprocessed/spmel/val.pkl', "rb"))
+validation_pt = pickle.load(open('/hd0/speechsplit/original_preprocessed/spmel/val.pkl', "rb"))
 
 class Solver(object):
     """Solver for training"""
@@ -27,13 +27,13 @@ class Solver(object):
 
         # Training configurations.
         self.num_iters = config.num_iters
-        self.g_lr = config.g_lr
-        self.beta1 = config.beta1
-        self.beta2 = config.beta2
-        self.resume_iters = config.resume_iters
+        self.g_lr = config.g_lr                           # 0.0001
+        self.beta1 = config.beta1                         # 0.9
+        self.beta2 = config.beta2                         # 0.999
+        self.resume_iters = config.resume_iters           # None
         
         # Miscellaneous.
-        self.use_tensorboard = config.use_tensorboard
+        self.use_tensorboard = config.use_tensorboard     # True
         self.use_cuda = torch.cuda.is_available()
         self.device = torch.device('cuda:{}'.format(config.device_id) if self.use_cuda else 'cpu')
 
