@@ -79,6 +79,7 @@ class Encoder_t(nn.Module):
         
         self.lstm.flatten_parameters()
         outputs, _ = self.lstm(x)
+
         if mask is not None:
             outputs = outputs * mask
         out_forward = outputs[:, :, :self.dim_neck_2]

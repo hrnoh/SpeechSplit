@@ -15,7 +15,7 @@ from utils import pySTFT
 
 mel_basis = mel(22050, 1024, fmin=90, fmax=7600, n_mels=80).T
 min_level = np.exp(-100 / 20 * np.log(10))
-b, a = butter_highpass(30, 16000, order=5)
+b, a = butter_highpass(30, 22050, order=5)
 
 spk2gen = pickle.load(open('assets/spk2gen.pkl', "rb"))
 

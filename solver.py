@@ -218,7 +218,7 @@ class Solver(object):
                             x_real_pad = torch.from_numpy(x_real_pad).to(self.device)
                             x_f0 = torch.cat((x_real_pad, f0_org_val), dim=-1)
                             x_identic_val = self.G(x_f0, x_real_pad, emb_org_val.unsqueeze(0))
-                            g_loss_val = F.mse_loss(x_real_pad, x_identic_val, reduction='sum')
+                            g_loss_val = F.mse_loss(x_real_pad, x_identic_val, reduction='mean')
                             loss_val.append(g_loss_val.item())
                 val_loss = np.mean(loss_val)
                 print('Validation loss: {}'.format(val_loss))
